@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="RegisterCustomer">
     <HelloWorld msg="Register" />
     <div id="my-signin2"></div>
 
@@ -10,12 +10,12 @@
             <v-flex xs12 sm8 md4>
               <v-card class="elevation-12">
                 <v-toolbar color="primary" dark>
-                  <v-toolbar-title>Sign Up</v-toolbar-title>
+                  <v-toolbar-title>Register Customer</v-toolbar-title>
                   <v-spacer></v-spacer>
                 </v-toolbar>
                 <v-card-text>
                   <v-form
-                    @submit.prevent="register"
+                    @submit.prevent="onSubmit"
                     ref="form"
                     v-model="valid"
                     lazy-validation
@@ -25,6 +25,7 @@
                       placeholder="Email Address..."
                       v-model="email"
                       :rules="emailRules"
+                      class="form-control"
                       prepend-icon="person"
                       label="Email"
                       required
@@ -51,22 +52,11 @@
                     color="orange"
                     class="faq-contact-submit-btn"
                     type="submit"
-                    @click="register"
+                    @click="onSubmit"
                   >
-                    Sign Up
+                    Register Customer
                   </v-btn>
                 </v-card-actions>
-                <!-- <div class="google">
-                  <div class="google-button" @click="socialLogin">
-                    <h6>Or</h6>
-                    <div class="google-act-btn-innerwrapper">
-                      <v-btn class="account-btn-wrapper">
-                        <span class="icon mdi mdi-google"></span>
-                        <a class="google-word"> Sign Up with Google</a>
-                      </v-btn>
-                    </div>
-                  </div>
-                </div> -->
               </v-card>
             </v-flex>
           </v-layout>
@@ -75,45 +65,57 @@
     </v-app>
   </div>
 </template>
+
 <script
   src="https://apis.google.com/js/platform.js?onload=renderButton"
   async
   defer
 ></script>
 <script>
-// @ is an alias to /src
 import HelloWorld from "@/components/HelloWorld.vue";
 import firebase from "firebase";
+import "firebase/auth";
 
 export default {
-  name: "Home",
+  name: "RegisterCustomer",
   components: {
     HelloWorld,
   },
   methods: {
-    register() {
-      firebase
+    async onSubmit() {
+      let admin = {
+        role: {
+          admin: false,
+        },
+      };
+      let user_type = "user";
+      var response = await firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then(() => {
-          alert("Successfully registered!");
-          this.$router.push("/dashboard");
-        })
-        .catch((error) => {
-          alert(error.message);
+        .catch(function (error) {
+          return false;
         });
-    },
-    socialLogin() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(() => {
-          this.$router.push("/dashboard");
-        })
-        .catch((err) => {
-          alert("Oops. " + err.message);
-        });
+      if (!response) {
+        alert("Oops... Registration falied!");
+      } else {
+        var db = firebase.firestore();
+        db.collection("users")
+          .doc(response.uid)
+          .set({
+            uid: response.uid,
+            role: admin.role,
+            user_type: user_type,
+          })
+          .then(() => {
+            alert("Customer Registered Successfully !");
+            this.$router.push("/customer");
+          })
+          .catch((error) => {
+            console.error("Error : ", error);
+          });
+
+        //this.props.history.push("/");
+      }
     },
     validate() {
       this.$refs.form.validate();
@@ -169,7 +171,6 @@ img {
   box-shadow: 0 5px 10px -7px #333333;
   border-radius: 50%;
 }
-
 .google-button h6 {
   font-size: 16px;
   font-weight: 500;
@@ -195,7 +196,7 @@ button.account-btn-wrapper:hover {
   justify-content: center;
 }
 .login-btn-main-wrapper button.faq-contact-submit-btn {
-  width: 130px;
+  width: 200px;
 }
 .google .google-button {
   padding: 25px 0px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="RegisterCustomer">
     <HelloWorld msg="Register" />
     <div id="my-signin2"></div>
 
@@ -15,7 +15,7 @@
                 </v-toolbar>
                 <v-card-text>
                   <v-form
-                    @submit.prevent="register"
+                    @submit.prevent="onSubmit"
                     ref="form"
                     v-model="valid"
                     lazy-validation
@@ -25,6 +25,7 @@
                       placeholder="Email Address..."
                       v-model="email"
                       :rules="emailRules"
+                      class="form-control"
                       prepend-icon="person"
                       label="Email"
                       required
@@ -43,6 +44,25 @@
                       hide-details="auto"
                       outlined
                     ></v-text-field>
+                    <v-container fluid>
+                      <v-row align="center">
+                        <v-col cols="6">
+                          <v-subheader>Select Role </v-subheader>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-select
+                            v-model="user_type"
+                            :items="items"
+                            item-text="role"
+                            label="Select"
+                            persistent-hint
+                            return-object
+                            required
+                            single-line
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </v-form>
                 </v-card-text>
                 <v-card-actions class="login-btn-main-wrapper">
@@ -51,22 +71,11 @@
                     color="orange"
                     class="faq-contact-submit-btn"
                     type="submit"
-                    @click="register"
+                    @click="onSubmit"
                   >
                     Sign Up
                   </v-btn>
                 </v-card-actions>
-                <!-- <div class="google">
-                  <div class="google-button" @click="socialLogin">
-                    <h6>Or</h6>
-                    <div class="google-act-btn-innerwrapper">
-                      <v-btn class="account-btn-wrapper">
-                        <span class="icon mdi mdi-google"></span>
-                        <a class="google-word"> Sign Up with Google</a>
-                      </v-btn>
-                    </div>
-                  </div>
-                </div> -->
               </v-card>
             </v-flex>
           </v-layout>
@@ -81,39 +90,55 @@
   defer
 ></script>
 <script>
-// @ is an alias to /src
 import HelloWorld from "@/components/HelloWorld.vue";
 import firebase from "firebase";
+import "firebase/firestore";
+// import "firebase/functions";
+
+// import * as firebase from "firebase/app";
+// import "firebase/auth";
 
 export default {
-  name: "Home",
+  name: "RegisterAdmin",
   components: {
     HelloWorld,
   },
   methods: {
-    register() {
-      firebase
+    async onSubmit() {
+      var response = await firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then(() => {
-          alert("Successfully registered!");
-          this.$router.push("/dashboard");
-        })
-        .catch((error) => {
-          alert(error.message);
+        .catch(function (error) {
+          return false;
         });
-    },
-    socialLogin() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(() => {
-          this.$router.push("/dashboard");
-        })
-        .catch((err) => {
-          alert("Oops. " + err.message);
-        });
+
+      if (!response) {
+        alert("Oops... Registration falied!");
+      } else {
+        console.log("hey45", response.uid);
+        console.log("user", this.user_type);
+        var db = firebase.firestore();
+        db.collection("users")
+          .doc(response.uid)
+          .set({
+            uid: response.uid,
+            user_type: this.user_type,
+          })
+          .then(() => {
+            alert("Registered Successfully");
+            this.$router.push("/admin");
+            // if (this.user_type == "Admin") {
+            //   this.$router.push("/admin");
+            // } else if (this.user_type == "Customer") {
+            //   this.$router.push("/customer");
+            // }
+          })
+          .catch((error) => {
+            console.error("Error : ", error);
+          });
+
+        //this.props.history.push("/");
+      }
     },
     validate() {
       this.$refs.form.validate();
@@ -133,6 +158,9 @@ export default {
       (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
     ],
     password: "",
+    user: null,
+    user_type: "",
+    items: ["Admin", "Customer"],
   }),
 };
 function onSuccess(googleUser) {
@@ -153,7 +181,6 @@ function renderButton() {
   });
 }
 </script>
-
 <style scoped>
 .layout.login-page-main-wrapper {
   justify-content: center;
@@ -195,9 +222,10 @@ button.account-btn-wrapper:hover {
   justify-content: center;
 }
 .login-btn-main-wrapper button.faq-contact-submit-btn {
-  width: 130px;
+  width: 200px;
 }
 .google .google-button {
   padding: 25px 0px;
 }
 </style>
+<style></style>
