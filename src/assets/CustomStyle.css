@@ -4,6 +4,36 @@
 }
 .invoice-box .v-text-field--outlined > .v-input__control > .v-input__slot {
   min-height: 40px !important;
+}
+.template-selectbox-wrapper
+  .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
+  > .v-input__control
+  > .v-input__slot
+  fieldset {
+  border: 1px solid #f6f5f9 !important;
+  outline: none;
+  background-color: #f6f5f9;
+}
+.template-selectbox-wrapper
+  .v-text-field--outlined
+  > .v-input__control
+  > .v-input__slot {
+  border: none !important;
+}
+.template-selectbox-wrapper {
+  position: relative;
+}
+.template-selectbox-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  background-image: url(/img/select-icon.51072af9.svg);
+  width: 60px;
+  right: 10px;
+  height: 60px;
+}
+.v-text-field--outlined > .v-input__control > .v-input__slot {
+  border: 1px solid #dbdff3 !important;
   background-color: #fff !important;
 }
 .invoice-modalwrapper
@@ -142,14 +172,14 @@ table.summary-table-mainwrapper tbody tr td {
 .bank-template-mainwrapper:hover .invoice-type-innerwrapper {
   border-radius: 3px;
   cursor: pointer;
-  z-index: 0;
+
   background: rgba(0, 0, 0, 0.015);
   border: 2px dashed rgba(0, 0, 0, 0.05);
   opacity: 1;
 }
 .invoice-type-innerwrapper {
   text-align: left;
-  height: 100%;
+  height: auto !important;
   position: relative;
   padding: 0px 0px 0px 15px;
   border: 2px dashed #fff;
@@ -266,4 +296,118 @@ table.summary-table-mainwrapper tbody tr td {
   vertical-align: bottom;
   margin-bottom: 3px;
   border-bottom: 1px solid #aaa;
+}
+
+/******24-12-2024**************/
+
+.date-time-picker .field-input {
+  height: 24px !important;
+  /* width: 150px !important; */
+  min-height: 24px !important;
+  padding-right: 10px !important;
+  font-size: 13px !important;
+  outline: none !important;
+  border-color: #fff !important;
+  outline: none !important;
+  background-color: transparent !important;
+}
+.date-time-picker .custom-button.round {
+  display: none !important;
+}
+/* .date-time-picker .field-input:hover{
+    border-radius: 3px;
+    cursor: pointer;
+    z-index: 0;
+    background: rgba(0, 0, 0, 0.015);
+    border: 2px dashed rgba(0, 0, 0, 0.05) !important;
+    opacity: 1;
+} */
+.invoice-details-wrapper .v-input.form-control {
+  outline: none !important;
+}
+.invoice-details-wrapper
+  .v-text-field--outlined
+  > .v-input__control
+  > .v-input__slot {
+  outline: none !important;
+  min-height: 0px !important;
+  height: 0px !important;
+}
+.datetimepicker .datepicker {
+  z-index: 999 !important;
+}
+
+.v-input__control,
+.v-input__slot,
+.v-select__slot {
+  border: 0;
+}
+.invoice-details-wrapper .v-input__slot::before {
+  border-style: none !important;
+}
+
+.invoice-details-wrapper .v-input.form-control {
+  border-radius: 3px;
+  cursor: pointer;
+  z-index: 0;
+  background: rgba(0, 0, 0, 0.015);
+  border: 2px dashed rgba(0, 0, 0, 0.05);
+  opacity: 1;
+  padding: 0px !important;
+  width: 100%;
+  height: 24px !important;
+}
+.delete-invoicemodal label {
+  text-align: left;
+}
+.custom-modalinnerwrapper {
+  text-align: left;
+}
+.custom-modalinnerwrapper .v-card__title {
+  height: 50px;
+}
+.country-selectb .v-select__selection--comma {
+  font-size: 13px;
+}
+.country-selectb input {
+  display: none;
+}
+.invoice-box table.responsive-table tbody tr.item {
+  display: block;
+}
+td.description-tablebody {
+  float: left;
+  width: 100% !important;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.invoice-box table tr.heading td:nth-child(1) {
+  width: 200px;
+}
+.invoice-box table tr.heading td:nth-child(2) {
+  width: 100px;
+}
+.invoice-box table tr.heading td:nth-child(3) {
+  width: 90px;
+}
+.invoice-box table tr.heading td:nth-child(4) {
+  width: 100px;
+}
+.invoice-box table tr.heading td:nth-child(5) {
+  width: 110px;
+}
+.invoice-box table tr.item td:nth-child(1) {
+  width: 200px;
+}
+.invoice-box table tr.item td:nth-child(2) {
+  width: 100px;
+}
+.invoice-box table tr.item td:nth-child(3) {
+  width: 90px;
+}
+.invoice-box table tr.item td:nth-child(4) {
+  width: 100px;
+}
+.invoice-box table tr.item td:nth-child(5) {
+  width: 110px;
 }

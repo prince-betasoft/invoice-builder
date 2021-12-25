@@ -11,8 +11,8 @@
 
     <div id="nav">
       <div v-if="!user" class="col-sm">
-        <!-- <router-link to="/">Sign In</router-link> |
-        <router-link to="/register-admin">Sign Up</router-link> -->
+        <router-link to="/">Sign In</router-link> |
+        <router-link to="/register-admin">Sign Up</router-link>
         <!-- <div v-if="user_type == 'Admin'">
           <router-link to="/admin">Dashboard</router-link>
         </div>
