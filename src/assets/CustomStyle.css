@@ -27,7 +27,7 @@
   content: "";
   position: absolute;
   top: 14px;
-  background-image: url(/img/select-icon.51072af9.svg);
+  background-image: url("./images/select-icon.svg");
   width: 60px;
   right: 10px;
   height: 60px;
@@ -181,7 +181,7 @@ table.summary-table-mainwrapper tbody tr td {
   text-align: left;
   height: auto !important;
   position: relative;
-  padding: 0px 0px 0px 15px;
+  padding: 0px 0px 18px 15px;
   border: 2px dashed #fff;
 }
 .select-fileinner-wrapper {
