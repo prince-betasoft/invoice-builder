@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-undef */
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
@@ -7,6 +9,8 @@ import firebase from "firebase";
 import "firebase/firestore";
 // import firebase from 'firebase/app';
 import "../src/assets/CustomStyle.css";
+
+import "firebase/storage";
 
 var firebaseConfig = {
   apiKey: "AIzaSyB2AM6H0gxlReWA9xNdRJbWhC-396S8keA",
@@ -23,6 +27,7 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 Vue.config.productionTip = false;
+export const storage = firebase.storage()
 
 new Vue({
   router,

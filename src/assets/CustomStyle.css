@@ -2,8 +2,35 @@
   margin: 0px;
   padding: 0px;
 }
+.v-list-item--link:hover:before {
+  background-color: #257eff !important;
+  bottom: 0;
+  content: "";
+  left: 0;
+  color: #fff !important;
+  opacity: 1 !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+.v-list-item__content:hover {
+  color: #fff !important;
+  z-index: 999;
+}
 .invoice-box .v-text-field--outlined > .v-input__control > .v-input__slot {
   min-height: 40px !important;
+}
+.currency-symbol-mainwrapper
+  .v-select.v-text-field--outlined:not(.v-text-field--single-line)
+  .v-select__selections {
+  padding: 0px !important;
+}
+td.new-tax-rateselect
+  .v-select.v-text-field--outlined:not(.v-text-field--single-line)
+  .v-select__selections {
+  padding: 0px !important;
 }
 .template-selectbox-wrapper
   .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
@@ -146,6 +173,8 @@ table.summary-table-mainwrapper tbody tr td {
 }
 .recipientbackground-wrapper {
   background-image: url("./images/recipient-name.svg");
+  background-size: 33px;
+  padding-left: 5px;
 }
 .drag-filebackground {
   background-image: url("./images/drag-file.svg");
@@ -154,6 +183,9 @@ table.summary-table-mainwrapper tbody tr td {
   background-position: left;
 }
 .sender-contentbodywrapper span i {
+  display: none;
+}
+.recipientbackground-wrapper span i {
   display: none;
 }
 .invoice-summary-wrapper h2 {
@@ -204,17 +236,18 @@ table.summary-table-mainwrapper tbody tr td {
 }
 .invoice-box table.responsive-table tbody:hover .table-delete-edit-btnwrapper {
   opacity: 1;
+  border-bottom: none;
 }
 .table-delete-edit-btnwrapper {
   position: absolute;
   top: 10px;
-  right: -34px;
+  right: -39px;
   opacity: 0;
 }
 .table-delete-edit-btnwrapper i {
   color: #bbb;
   margin-right: 10px;
-  font-size: 17px;
+  font-size: 15px;
 }
 .table-delete-edit-btnwrapper i.pencil-iconwrapper:hover {
   color: #000 !important;
@@ -227,7 +260,7 @@ table.summary-table-mainwrapper tbody tr td {
   font-size: 15px;
 }
 .delete-invoicemodal p {
-  font-size: 25px !important;
+  font-size: 20px !important;
   padding: 20px 0px;
 }
 .delete-invoicemodal .v-card__text {
@@ -359,6 +392,7 @@ table.summary-table-mainwrapper tbody tr td {
 }
 .delete-invoicemodal label {
   text-align: left;
+  display: flex;
 }
 .custom-modalinnerwrapper {
   text-align: left;
@@ -382,7 +416,7 @@ td.description-tablebody {
   word-wrap: break-word;
 }
 .invoice-box table tr.heading td:nth-child(1) {
-  width: 200px;
+  width: 185px;
 }
 .invoice-box table tr.heading td:nth-child(2) {
   width: 100px;
@@ -397,7 +431,7 @@ td.description-tablebody {
   width: 110px;
 }
 .invoice-box table tr.item td:nth-child(1) {
-  width: 200px;
+  width: 185px;
 }
 .invoice-box table tr.item td:nth-child(2) {
   width: 100px;
@@ -410,4 +444,25 @@ td.description-tablebody {
 }
 .invoice-box table tr.item td:nth-child(5) {
   width: 110px;
+}
+.currency-symbol-mainwrapper .v-input__append-inner {
+  margin-top: 3px !important;
+}
+.v-input__append-inner {
+  margin-top: 10px !important;
+}
+.sender-modal-mainwrapper .v-menu__content--fixed {
+  position: absolute;
+  top: 16% !important;
+  left: 49% !important;
+}
+.v-menu__content {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 3rem rgb(0 0 0 / 20%);
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+div#list-6 {
+  /* border: px sold #1976d2; */
 }
