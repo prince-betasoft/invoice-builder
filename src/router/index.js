@@ -1,103 +1,27 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import login from "../views/login.vue";
 import firebase from "firebase";
-// import Login from '@/views/Login'
-import RegisterCustomer from "@/views/RegisterCustomer";
-import RegisterAdmin from "@/views/RegisterAdmin";
-import Admin from "@/views/Admin";
-import Subscriber from "@/views/Subscriber";
-import Customer from "@/views/Customer";
-//  import firebase from "firebase/app";
+import Register from "@/views/register";
 import "firebase/auth";
 
 Vue.use(VueRouter);
 
 const routes = [
-  // {
-  //   path: "/",
-  //   name: "add",
-  //   component: () => import("../components/UserCreate"),
-  // },
-  // {
-  //   path: "/list",
-  //   name: "list",
-  //   component: () => import("../components/UserList"),
-  // },
-  // {
-  //   path: "/edit/:id",
-  //   name: "edit",
-  //   component: () => import("../components/UserEdit"),
-  // },
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "login",
+    component: login,
     meta: {
       guest: true,
     },
   },
   {
-    path: "/register",
-    name: "Register",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
-  },
-  {
-    path: "/dashboard",
-    name: "Dashboard",
-    component: () =>
-      import(/* webpackChunkName: "dashboard" */ "../views/Dashboard.vue"),
-    meta: {
-      authRequired: true,
-    },
-  },
-  {
-    path: "/register-customer",
-    name: "regiester-customer",
-    component: RegisterCustomer,
+    path: "/sign-up",
+    name: "sign-up",
+    component: Register,
     meta: {
       guest: true,
-    },
-  },
-  {
-    path: "/register-admin",
-    name: "register-admin",
-    component: RegisterAdmin,
-    meta: {
-      guest: true,
-    },
-  },
-  // {
-  //   path: '/login',
-  //   name: 'login',
-  //   component: Login,
-  //   meta: {
-  //     guest: true
-  //   }
-  // },
-  {
-    path: "/admin",
-    name: "admin",
-    component: Admin,
-    meta: {
-      authRequired: true,
-    },
-  },
-  {
-    path: "/subscriber",
-    name: "subscriber",
-    component: Subscriber,
-    meta: {
-      authRequired: true,
-    },
-  },
-  {
-    path: "/customer",
-    name: "customer",
-    component: Customer,
-    meta: {
-      authRequired: true,
     },
   },
   {
@@ -109,9 +33,33 @@ const routes = [
     },
   },
   {
-    path: "/edit/:id",
-    name: "edit",
-    component: () => import("../views/EditInvoice"),
+    path: "/dashboard",
+    name: "dashboard",
+    component: () => import("../views/dashboard.vue"),
+    meta: {
+      authRequired: true,
+    },
+  },
+  {
+    path: "/new-invoice",
+    name: "new-invoice",
+    component: () => import("../views/NewInvoiceGenerate.vue"),
+    meta: {
+      authRequired: true,
+    },
+  },
+  {
+    path: "/new-client",
+    name: "new-client",
+    component: () => import("../views/addNewClient.vue"),
+    meta: {
+      guest: true,
+    },
+  },
+  {
+    path: "/my-details",
+    name: "my-details",
+    component: () => import("../views/MyDetails.vue"),
     meta: {
       guest: true,
     },
@@ -139,31 +87,22 @@ router.beforeEach((to, from, next) => {
   }
   firebase.auth().onAuthStateChanged((userAuth) => {
     if (userAuth) {
+      console.log("user_id", userAuth.uid);
       firebase
         .auth()
         .currentUser.getIdTokenResult()
         .then(function ({ claims }) {
-          if (claims.customer) {
-            if (to.path !== "/customer")
+          if (claims.admin) {
+            if (to.path !== "/new-invoice")
               return next({
-                path: "/customer",
-              });
-          } else if (claims.admin) {
-            if (to.path !== "/admin")
-              return next({
-                path: "/admin",
-              });
-          } else if (claims.subscriber) {
-            if (to.path !== "/subscriber")
-              return next({
-                path: "/subscriber",
+                path: "/new-invoice",
               });
           }
         });
     } else {
       if (to.matched.some((record) => record.meta.auth)) {
         next({
-          path: "/login",
+          path: "/",
           query: {
             redirect: to.fullPath,
           },

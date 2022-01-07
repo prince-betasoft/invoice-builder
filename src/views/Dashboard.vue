@@ -1,88 +1,151 @@
 <template>
-  <div id="app">
-    <HelloWorld msg="Welcome" />
-    <v-card class="mx-auto" max-width="500">
-      <v-toolbar color="indigo" dark>
-        <v-toolbar-title>Dashboard</v-toolbar-title>
-        <v-spacer></v-spacer>
-      </v-toolbar>
-      <v-container fluid>
-        <v-row dense>
-          <v-col v-for="card in cards" :key="card.title" :cols="card.flex">
-            <v-card>
-              <v-img
-                :src="card.src"
-                class="white--text align-end"
-                gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-                height="200px"
-              >
-                <v-card-title v-text="card.title"></v-card-title>
-              </v-img>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon>mdi-bookmark</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon>mdi-share-variant</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-card>
-    <div id="nav">
-      <v-btn color="primary" dark @click="logout">Logout</v-btn>
+  <div>
+    <div class="logo">
+      <h2></h2>
     </div>
-    <router-view />
+    <v-navigation-drawer
+      v-model="drawer"
+      :mini-variant="miniVariant"
+      :clipped="clipped"
+      fixed
+      app
+      class=""
+    >
+      <template v-slot:prepend>
+        <v-list-item two-line>
+          <v-list-item-content class="dashboard-username-wrapper">
+            <v-list-item-title>
+              <p v-if="user">Email: {{ user.email }}</p></v-list-item-title
+            >
+          </v-list-item-content>
+        </v-list-item>
+      </template>
+
+      <v-list class="dashboard-sidebar-selectedheading-wrapper">
+        <v-list-item
+          v-for="(item, i) in items"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.title" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <v-divider style="margin-top: 35px"></v-divider>
+      <v-btn class="sidebar-paymentbtn-wrapper"> International Payments </v-btn>
+      <v-divider style="margin-bottom: 35px"></v-divider>
+      <v-list-item>
+        <v-list-item-icon class="dashboard-sidebar-logout-wrapper">
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title
+            class="dashboard-sidebar-selectedheading-wrapper"
+            @click="signout"
+          >
+            Sign Out</v-list-item-title
+          >
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-list-item>
+        <v-list-item-icon class="dashboard-sidebar-email-wrapper">
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title
+            class="dashboard-sidebar-selectedheading-wrapper"
+            @click="sendEmailDefault"
+          >
+            Contact Us</v-list-item-title
+          >
+        </v-list-item-content>
+      </v-list-item>
+    </v-navigation-drawer>
   </div>
 </template>
-
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-import firebase from "firebase";
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import Toaster from "../services/sweetToaster.js";
 
 export default {
-  // name: "Home","App",
-  components: {
-    HelloWorld,
-  },
+  name: "UserDashboard",
   data() {
     return {
+      users: [],
+      user: null,
       email: "",
       password: "",
-      cards: [
+      clipped: false,
+      drawer: true,
+      fixed: false,
+      items: [
         {
-          title: "Pre-fab homes",
-          src: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
-          flex: 12,
+          icon: "dashboard-sidebar-document-wrapper",
+          title: "Invoices",
+          to: "/new-invoice",
         },
         {
-          title: "Favorite road trips",
-          src: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
-          flex: 6,
+          icon: "dashboard-sidebar-account-wrapper",
+          title: "Clients",
+          to: "/new-client",
         },
         {
-          title: "Best airlines",
-          src: "https://cdn.vuetifyjs.com/images/cards/plane.jpg",
-          flex: 6,
+          icon: "dashboard-sidebar-settings-wrapper",
+          title: "My Details",
+          to: "/my-details",
         },
       ],
+
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      title: "Vuetify.js",
+      fav: true,
+      menu: false,
+      message: false,
+      hints: true,
     };
   },
+  created() {
+    var self = this;
+    firebase.auth().onAuthStateChanged((user) => {
+      self.user = user;
+    });
+    this.users = [];
+    firebase
+      .firestore()
+      .collection("roles")
+      .get()
+      .then((snap) => {
+        snap.forEach((doc) => {
+          var user = doc.data();
+          user.id = doc.id;
+          // console.log("data", doc.data());
+          if (!user.role.admin) this.users.push(user);
+        });
+      });
+  },
   methods: {
-    logout() {
+    sendEmailDefault() {
+      var email = "contact@freeinvoicebuilder.com";
+      var subject = "";
+      var msgBody =
+        "Thank you for contacting us, we will get back to you in 24 hours!";
+      window.open(`mailto:${email}?subject=${subject}&body=${msgBody}`);
+    },
+    signout() {
       firebase
         .auth()
         .signOut()
         .then(() => {
-          alert("Successfully logged out");
+          Toaster.success("Successfully logged out!", "success");
+
           this.$router.push("/");
         })
         .catch((error) => {
@@ -90,11 +153,17 @@ export default {
           this.$router.push("/");
         });
     },
+    changeRole(uid, event) {
+      var setUserRole = firebase.functions().httpsCallable("setUserRole");
+      var data = { uid: uid, role: { [event.target.value]: true } };
+      setUserRole(data)
+        .then((result) => {
+          console.log("Result", result);
+        })
+        .catch((error) => {
+          console.log("Error", error);
+        });
+    },
   },
 };
 </script>
-<style scoped>
-.theme--dark.v-btn:not(.v-btn--icon):not(.v-btn--flat) {
-  background-color: #1e6cd9;
-}
-</style>

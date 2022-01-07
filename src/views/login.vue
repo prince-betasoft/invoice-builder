@@ -1,7 +1,13 @@
 <template>
-  <div class="home">
-    <HelloWorld msg="Login" />
+  <div>
     <v-app>
+      <header class="header-area fixed_header">
+        <v-card-actions class="login-btn-main-wrapper">
+          <v-card-actions class="dashboard-header-logo-wrapper">
+          </v-card-actions>
+          <router-link to="/create-invoice"> Create Invoice</router-link>
+        </v-card-actions>
+      </header>
       <v-container fluid>
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4>
@@ -19,12 +25,10 @@
                 >
                   <v-text-field
                     type="email"
-                    placeholder="Email Address..."
+                    label="Email Address"
                     v-model="email"
                     class="form-control"
-                    prepend-icon="person"
                     :rules="emailRules"
-                    label="Email"
                     required
                     hide-details="auto"
                     outlined
@@ -35,15 +39,14 @@
                     type="password"
                     label="Password"
                     required
+                    :rules="passwordRules"
                     class="form-control"
-                    prepend-icon="lock"
                     hide-details="auto"
                     outlined
                   ></v-text-field>
                 </v-form>
               </v-card-text>
-              <v-card-actions class="login-btn-main-wrapper">
-                <!-- <v-spacer></v-spacer> -->
+              <v-card-actions class="login-btn-main-wrapper login-wrapper">
                 <v-btn
                   :disabled="!valid"
                   color="primary"
@@ -51,9 +54,17 @@
                   type="submit"
                   @click="login"
                 >
-                  Sign In
+                  Login<i class="fas fa-chevron-right ml-2"></i>
                 </v-btn>
               </v-card-actions>
+              <v-divider style="margin-top: 35px"></v-divider>
+
+              <v-row class="alignment_wrapper">
+                <div>Don't have an account?</div>
+              </v-row>
+              <v-btn class="download-btn">
+                <router-link to="/sign-up">Sign Up</router-link>
+              </v-btn>
               <!-- <div class="google">
                 <div class="google-button" @click="socialLogin">
                   <h6>Or</h6> -->
@@ -77,46 +88,44 @@
 </template>
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-// import * as firebase from "firebase/app";
 import "firebase/auth";
-// import HelloWorld from "../components/HelloWorld";
-
+import Toaster from "../services/sweetToaster.js";
 import firebase from "firebase";
 
 export default {
-  name: "Home",
-  components: {
-    HelloWorld,
-  },
+  name: "login",
+  components: {},
   methods: {
     login() {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then((response) => {
-          alert("Successfully logged in");
-          var db = firebase.firestore();
-          db.collection("users")
-            .where("uid", "==", response.uid)
-            .get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                console.log(response.uid, " => ", doc.data());
-                let user_type = doc.data().user_type;
-                if (user_type == "Admin") {
-                  this.$router.push("/admin");
-                } else if (user_type == "Customer") {
-                  this.$router.push("/customer");
-                }
+      const check = this.$refs.form.validate();
+      if (check) {
+        firebase
+          .auth()
+          .signInWithEmailAndPassword(this.email, this.password)
+          .then((response) => {
+            Toaster.success(" Successfully logged in", "success");
+            var db = firebase.firestore();
+            db.collection("users")
+              .where("uid", "==", response.uid)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  console.log(response.uid, " => ", doc.data());
+                  let user_type = doc.data().user_type;
+                  if (user_type == "Individual") {
+                    this.$router.push("/new-invoice");
+                  } else if (user_type == "Company") {
+                    this.$router.push("/new-invoice");
+                  }
+                });
               });
-            });
-          // this.$router.push("/dashboard");
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+          })
+          .catch(() => {
+            Toaster.error(" Incorrect email or password", "error");
+          });
+      }
     },
+
     created() {
       firebase.auth().onAuthStateChanged((userAuth) => {
         if (userAuth) {
@@ -124,7 +133,7 @@ export default {
             .auth()
             .currentUser.getIdTokenResult()
             .then((tokenResult) => {
-              console.log("🍎 ", tokenResult.claims);
+              console.log("Token ", tokenResult.claims);
             });
         }
       });
@@ -135,7 +144,7 @@ export default {
         .auth()
         .signInWithPopup(provider)
         .then(() => {
-          this.$router.push("/dashboard");
+          this.$router.push("/new-invoice");
         })
         .catch((err) => {
           alert("Oops. " + err.message);
@@ -144,6 +153,7 @@ export default {
     validate() {
       this.$refs.form.validate();
     },
+
     reset() {
       this.$refs.form.reset();
     },
@@ -154,11 +164,16 @@ export default {
   data: () => ({
     valid: true,
     email: "",
+    password: "",
+
     emailRules: [
-      (v) => !!v || "E-mail is required",
+      (v) => !!v || "Please complete this mandatory field",
       (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
     ],
-    password: "",
+    passwordRules: [
+      (v) => !!v || "Please complete this mandatory field",
+      (v) => (v && v.length > 5) || "Password must at least 6 characters",
+    ],
   }),
 };
 </script>
@@ -206,5 +221,80 @@ button.account-btn-wrapper:hover {
 }
 .google .google-button {
   padding: 25px 0px;
+}
+.row.alignment_wrapper {
+  padding: 30px 70px 31px 154px;
+}
+button.download-btn {
+  background: #552cf6 !important;
+  color: #fff !important;
+  padding: 20px 30px !important;
+  text-transform: capitalize;
+}
+.v-application a {
+  color: #fff !important;
+}
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
+}
+input {
+  margin-right: 20px;
+}
+header {
+  border-bottom: 1px solid #e2e2e2;
+}
+.login-btn-main-wrapper {
+  justify-content: right;
+}
+.login-btn-main-wrapper button.faq-contact-submit-btn {
+  width: 150px;
+}
+.v-card__actions.login-btn-main-wrapper a {
+  color: #fff;
+  font-size: 16px;
+  background-color: #1e79f2;
+  font-weight: 500;
+  padding: 13px 20px;
+  text-decoration: none;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.v-card__actions.login-btn-main-wrapper a:hover {
+  text-decoration: underline;
+}
+.login-wrapper {
+  justify-content: left;
+  margin-left: 10px;
+}
+.login-wrapper button {
+  width: 100px !important;
+  height: 40px !important;
+  text-transform: capitalize;
+  letter-spacing: normal;
+}
+a.router-link-wrapper {
+  color: #fff !important;
+}
+a,
+u {
+  text-decoration: none;
 }
 </style>

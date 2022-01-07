@@ -59,6 +59,37 @@ td.new-tax-rateselect
   right: 10px;
   height: 60px;
 }
+
+.dashboard-sidebar-document-wrapper {
+  background-image: url("./images/file-document.png");
+  background-position: center;
+}
+.dashboard-sidebar-account-wrapper {
+  background-image: url("./images/account-multiple.png");
+  background-position: center;
+}
+.dashboard-sidebar-settings-wrapper {
+  background-image: url("./images/cog-outline.png");
+  background-position: center;
+}
+.dashboard-sidebar-logout-wrapper {
+  background-image: url("./images/logout-variant.svg");
+  background-position: center;
+}
+.dashboard-sidebar-email-wrapper {
+  background-image: url("./images/email-outline.svg");
+  background-position: center;
+}
+.dashboard-sidebar-logo-wrapper {
+  background-image: url("./images/invoice.svg");
+  background-position: center;
+  padding: 57px;
+}
+.dashboard-header-logo-wrapper {
+  background-image: url("./images/Invoice-logo.svg");
+  background-position: left;
+  padding: 22px 628px 28px 502px;
+}
 .v-text-field--outlined > .v-input__control > .v-input__slot {
   border: 1px solid #dbdff3 !important;
   background-color: #fff !important;
@@ -465,4 +496,121 @@ td.description-tablebody {
 }
 div#list-6 {
   /* border: px sold #1976d2; */
+}
+.v-list-item__content:hover {
+  color: #000000 !important;
+  z-index: 999;
+}
+
+/************************* Dashboard Css  ***************************************/
+.dashboard-username-wrapper {
+  padding: 10px 0px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  margin: 2rem 0rem 15px;
+}
+.userdetails-asidewrapper {
+  background-color: rgb(255, 255, 255) !important;
+  width: 200px !important;
+  overflow: hidden auto !important;
+  box-shadow: rgb(212 210 219) 0px 0px 2px;
+}
+.dashboard-username-wrapper p {
+  margin-bottom: 0px !important;
+  word-break: break-all;
+  font-size: 14px;
+}
+.dashboard-sidebar-selectedheading-wrapper a {
+  color: #000;
+  font-size: 14px !important;
+  text-align: left;
+  padding-left: 12px;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+}
+.dashboard-sidebar-selectedheading-wrapper .v-list-item__title {
+  color: #000;
+  font-size: 14px !important;
+  text-align: left;
+  padding-left: 12px;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+}
+.dashboard-sidebar-selectedheading-wrapper .v-list-item__action {
+  margin-right: 10px !important;
+}
+button.sidebar-paymentbtn-wrapper {
+  background: #90a7b8 !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 13px !important;
+  border-radius: 3px;
+  margin: 25px 0px !important;
+  letter-spacing: 0.5px !important;
+  text-transform: capitalize;
+  padding: 0 10px !important;
+}
+.dashboard-sidebar-document-wrapper {
+  background-color: #552cf6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.5rem !important;
+  width: 2.5rem;
+  border-radius: 50px !important;
+}
+/* .dashboard-sidebar-document-wrapper i {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 200;
+} */
+.dashboard-sidebar-settings-wrapper {
+  background-color: #41d0b6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.5rem !important;
+  width: 2.5rem;
+  border-radius: 50px !important;
+}
+/* .dashboard-sidebar-settings-wrapper i {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 200;
+} */
+.dashboard-sidebar-email-wrapper {
+  background-color: #e5e4ea;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.5rem !important;
+  width: 2.5rem;
+  border-radius: 50px !important;
+}
+/* .dashboard-sidebar-email-wrapper i {
+  color: #000;
+  font-size: 16px;
+  font-weight: 200;
+} */
+.dashboard-sidebar-account-wrapper {
+  background-color: #2cadf6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.5rem !important;
+  width: 2.5rem;
+  border-radius: 50px !important;
+}
+.dashboard-sidebar-logout-wrapper {
+  background-color: #e5e4ea;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.5rem !important;
+  width: 2.5rem;
+  border-radius: 50px !important;
+}
+.dashboard-sidebar-selectedheading-wrapper a:active {
+  background-color: #fff !important;
 }

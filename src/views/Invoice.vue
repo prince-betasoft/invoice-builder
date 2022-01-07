@@ -1,7 +1,5 @@
 <template>
   <div class="RegisterCustomer">
-    <HelloWorld msg="Register" />
-    <div id="my-signin2"></div>
     <v-app class="background_color">
       <v-container style="width: 1000px">
         <v-row>
@@ -23,1141 +21,16 @@
           <v-col cols="4">
             <div class="save-download-bankbody-wrapper">
               <v-btn @click="saveInvoiceData" class="save-btn">Save</v-btn
-              ><v-btn @click="generateReport" class="downlaod-btn"
+              ><v-btn class="downlaod-btn">Download</v-btn>
+              <!-- <v-btn @click="generateReport" class="downlaod-btn"
                 >Download</v-btn
-              >
+              > -->
             </div>
           </v-col>
         </v-row>
 
         <v-row>
-          <div>
-            <vue-html2pdf
-              :show-layout="false"
-              :float-layout="true"
-              :enable-download="true"
-              :preview-modal="true"
-              :paginate-elements-by-height="1400"
-              filename="invoice"
-              :pdf-quality="2"
-              :manual-pagination="false"
-              pdf-format="a4"
-              pdf-orientation="landscape"
-              pdf-content-width="800px"
-              @progress="onProgress($event)"
-              @hasStartedGeneration="hasStartedGeneration()"
-              @hasGenerated="hasGenerated($event)"
-              ref="html2Pdf"
-            >
-              <section slot="pdf-content">
-                <label class="form-label-outside">
-                  <v-card class="bank-template-mainwrapper">
-                    <v-row>
-                      <v-col cols="6">
-                        <v-form @click="onSubmitInvoiceLogo">
-                          <div
-                            v-if="imageData == null"
-                            class="
-                              invoice-type-innerwrapper
-                              mainwrapper-first-row
-                            "
-                          >
-                            <div>
-                              <div>
-                                <span
-                                  title="Add New select a file"
-                                  @click="click1"
-                                  class="placeholder"
-                                >
-                                </span>
-                                <input
-                                  type="file"
-                                  ref="input1"
-                                  style="display: none"
-                                  @change="previewImage"
-                                  accept="image/*"
-                                />
-                              </div>
-                              <br />
-                              <pre></pre>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <div v-if="imageData != null">
-                              <img
-                                class="preview"
-                                height="150px"
-                                width="150px"
-                                :src="img1"
-                              />
-                              <br />
-                            </div>
-                          </div>
-                        </v-form>
-                      </v-col>
-                      <v-col cols="6">
-                        <div
-                          class="
-                            invoice-type-innerwrapper
-                            mainwrapper-first-row
-                          "
-                        >
-                          <v-dialog
-                            v-model="InvoiceDialog"
-                            persistent
-                            max-width="250px"
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <div v-bind="attrs" v-on="on">
-                                <div>
-                                  {{ InvoiceTypeView.invoiceType }}
-                                </div>
-                              </div>
-                            </template>
-                            <v-card
-                              class="invoice-modalwrapper delete-invoicemodal"
-                            >
-                              <v-card-title>
-                                <span class="new-client-innerwrapper"
-                                  >Invoice Type</span
-                                >
-                                <i
-                                  text
-                                  @click="InvoiceDialog = false"
-                                  class="
-                                    fa fa-times
-                                    sender-modalwrapper-closebtn
-                                  "
-                                  aria-hidden="true"
-                                ></i>
-                              </v-card-title>
-                              <v-card-text>
-                                <v-container>
-                                  <v-form @click="onSubmitInvoice">
-                                    <v-row>
-                                      <v-col cols="12" lg="12">
-                                        <div class="country-selectb">
-                                          <v-select
-                                            :items="invoiceType"
-                                            v-model="
-                                              InvoiceTypeView.invoiceType
-                                            "
-                                            outlined
-                                            item-text="name"
-                                            item-value="id"
-                                            hide-details="auto"
-                                          ></v-select>
-                                        </div>
-                                      </v-col>
-                                    </v-row>
-                                  </v-form>
-                                  <div
-                                    class="
-                                      new-client-innerwrapper
-                                      set-invoice-modal
-                                    "
-                                  >
-                                    <v-btn @click="InvoiceDialog = false">
-                                      Set Invoice Type
-                                    </v-btn>
-                                  </div>
-                                </v-container>
-                              </v-card-text>
-                            </v-card>
-                          </v-dialog>
-                        </div>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="6">
-                        <v-dialog
-                          v-model="dialogSender"
-                          persistent
-                          max-width="700px"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <div
-                              class="invoice-type-innerwrapper"
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              <label
-                                class="form-label-outside"
-                                style="
-                                  text-transform: uppercase;
-                                  font-size: 11px;
-                                "
-                                >From</label
-                              >
-
-                              <div v-if="invoiceSenderView.senderName">
-                                <div>
-                                  <b>{{ invoiceSenderView.senderName }}</b>
-                                </div>
-                                <div>
-                                  {{ invoiceSenderView.senderCountry }}
-                                </div>
-                                <div>
-                                  {{ invoiceSenderView.senderFirstName }}
-                                </div>
-                                <div>
-                                  {{ invoiceSenderView.senderLastName }}
-                                </div>
-                                <div>
-                                  {{ invoiceSenderView.senderTaxNumber }}
-                                </div>
-                                <div>
-                                  {{ invoiceSenderView.senderEmail }}
-                                </div>
-                                <div>
-                                  {{ invoiceSenderView.senderAddress1 }}
-                                </div>
-                                <div>
-                                  {{ invoiceSenderView.senderAddress2 }}
-                                </div>
-                                <div>
-                                  {{ invoiceSenderView.senderPhone }}
-                                </div>
-                                <div>
-                                  {{ invoiceSenderView.senderWebsite }}
-                                </div>
-                              </div>
-                              <br />
-                              <br />
-                              <div v-if="!isHiddenCompanyInfo">
-                                <div class="input-terms-mainwrapper">
-                                  <input
-                                    type="value"
-                                    class="form-control"
-                                    v-model="invoiceAllDetails.companyInfo"
-                                    hide-details="auto"
-                                  />
-                                </div>
-                              </div>
-                              <div
-                                v-if="
-                                  customFieldOne.displayLocation == 'Sender'
-                                "
-                              >
-                                <div>
-                                  <b>{{ customFieldOne.fieldName }}</b>
-                                  <br />
-                                  {{ customFieldOne.fieldValue }}
-                                </div>
-                              </div>
-                              <div
-                                v-if="
-                                  customFieldTwo.displayLocation == 'Sender'
-                                "
-                              >
-                                <div>
-                                  <b>{{ customFieldTwo.fieldName }}</b>
-                                  <br />
-                                  {{ customFieldTwo.fieldValue }}
-                                </div>
-                              </div>
-                              <div
-                                v-if="
-                                  customFieldThree.displayLocation == 'Sender'
-                                "
-                              >
-                                <div>
-                                  <b>{{ customFieldThree.fieldName }}</b>
-                                  <br />
-                                  {{ customFieldThree.fieldValue }}
-                                </div>
-                              </div>
-                              <div
-                                v-if="
-                                  paymentOverview.displayLocation == 'Sender'
-                                "
-                              >
-                                <div>
-                                  <b>{{
-                                    paymentOverview.paymentTypeHeading
-                                  }}</b>
-                                  <br />
-                                  {{ paymentOverview.paymentType }}
-                                  <br />
-                                  <b>{{
-                                    paymentOverview.paymentDetailsHeading
-                                  }}</b>
-                                  <br />
-                                  {{ paymentOverview.paymentDetails }}
-                                </div>
-                              </div>
-                            </div>
-                          </template>
-                          <v-card class="sender-modal-mainwrapper">
-                            <v-card-title>
-                              <i
-                                @click="dialogSender = false"
-                                class="fa fa-times sender-modalwrapper-closebtn"
-                                aria-hidden="true"
-                              ></i>
-                            </v-card-title>
-                            <v-card-text>
-                              <v-container>
-                                <v-form
-                                  ref="sender_form"
-                                  @click="onFormSubmit"
-                                  lazy-validation
-                                >
-                                  <v-row>
-                                    <v-col cols="12" sm="6" md="8" lg="8">
-                                      <label class="form-label-outside"
-                                        >Company/ Client Name</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        class="form-control"
-                                        v-model="invoiceSenderView.senderName"
-                                        required
-                                        hide-details="auto"
-                                        :rules="nameRules"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4" lg="4">
-                                      <div class="country-selectb">
-                                        <label class="form-label-outside"
-                                          >Country</label
-                                        >
-                                        <v-select
-                                          v-model="
-                                            invoiceSenderView.senderCountry
-                                          "
-                                          :items="currencies"
-                                          outlined
-                                          item-text="name"
-                                          item-value="id"
-                                          hide-details="auto"
-                                        ></v-select>
-                                      </div>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >First Name</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        required
-                                        class="form-control"
-                                        v-model="
-                                          invoiceSenderView.senderFirstName
-                                        "
-                                        :rules="firstNameRules"
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Last Name</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        required
-                                        class="form-control"
-                                        v-model="
-                                          invoiceSenderView.senderLastName
-                                        "
-                                        :rules="lastNameRules"
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <div class="registraction-inpu-modal">
-                                        <i class="fa fa-pencil"></i
-                                        ><input
-                                          type="text"
-                                          placeholder="Tax Registration Number"
-                                        />
-                                      </div>
-                                      <v-text-field
-                                        outlined
-                                        class="form-control"
-                                        v-model="
-                                          invoiceSenderView.senderTaxNumber
-                                        "
-                                        hide-details="auto"
-                                        :rules="globalRules"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Email</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        required
-                                        class="form-control"
-                                        :rules="emailRules"
-                                        v-model="invoiceSenderView.senderEmail"
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                      <div class="border-wrapper-modal"></div>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Address 1</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        :rules="globalRulesAddress"
-                                        class="form-control"
-                                        v-model="
-                                          invoiceSenderView.senderAddress1
-                                        "
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Address 2</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        :rules="globalRulesAddress"
-                                        class="form-control"
-                                        v-model="
-                                          invoiceSenderView.senderAddress2
-                                        "
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Phone</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        class="form-control"
-                                        v-model="invoiceSenderView.senderPhone"
-                                        hide-details="auto"
-                                        @keypress="onlyNumbers"
-                                        maxlength="16"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Website</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        class="form-control"
-                                        :rules="websiteRules"
-                                        v-model="
-                                          invoiceSenderView.senderWebsite
-                                        "
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                      <v-card-actions class="sender-btnwrapper">
-                                        <v-btn @click="setSender">
-                                          Set Sender Details
-                                        </v-btn>
-                                      </v-card-actions>
-                                    </v-col>
-                                  </v-row>
-                                </v-form>
-                              </v-container>
-                            </v-card-text>
-                          </v-card>
-                        </v-dialog>
-                      </v-col>
-                      <v-col cols="6">
-                        <v-dialog
-                          v-model="dialogRecipient"
-                          persistent
-                          max-width="700px"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <div
-                              class="invoice-type-innerwrapper"
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              <label
-                                class="form-label-outside"
-                                style="
-                                  text-transform: uppercase;
-                                  font-size: 11px;
-                                "
-                                >To</label
-                              >
-                              <div v-if="invoiceClientView.clientCompanyName">
-                                <div>
-                                  <b>{{
-                                    invoiceClientView.clientCompanyName
-                                  }}</b>
-                                </div>
-                                <div>
-                                  {{ invoiceClientView.clientFirstName }}
-                                </div>
-                                <div>
-                                  {{ invoiceClientView.clientLastName }}
-                                </div>
-                                <div>
-                                  {{ invoiceClientView.clientEmail }}
-                                </div>
-                                <div>
-                                  {{ invoiceClientView.clientCountry }}
-                                </div>
-                                <div>
-                                  {{ invoiceClientView.clientAddress1 }}
-                                </div>
-                                <div>
-                                  {{ invoiceClientView.clientAddress2 }}
-                                </div>
-                                <div>
-                                  {{ invoiceClientView.clientPhone }}
-                                </div>
-                                <div>
-                                  {{ invoiceClientView.clientExtraData }}
-                                </div>
-                              </div>
-                              <br />
-                              <br />
-                              <v-div v-if="!isHiddenClientInfo">
-                                <div class="input-terms-mainwrapper">
-                                  <input
-                                    type="value"
-                                    class="form-control"
-                                    v-model="invoiceAllDetails.clientInfo"
-                                    hide-details="auto"
-                                  />
-                                </div>
-                              </v-div>
-                              <v-div
-                                v-if="
-                                  customFieldOne.displayLocation == 'Receiver'
-                                "
-                              >
-                                <div>
-                                  <b>{{ customFieldOne.fieldName }}</b>
-                                  <br />
-                                  {{ customFieldOne.fieldValue }}
-                                </div>
-                              </v-div>
-                              <v-div
-                                v-if="
-                                  customFieldTwo.displayLocation == 'Receiver'
-                                "
-                              >
-                                <div>
-                                  <b>{{ customFieldTwo.fieldName }}</b>
-                                  <br />
-                                  {{ customFieldTwo.fieldValue }}
-                                </div>
-                              </v-div>
-                              <v-div
-                                v-if="
-                                  customFieldThree.displayLocation == 'Receiver'
-                                "
-                              >
-                                <div>
-                                  <b>{{ customFieldThree.fieldName }}</b>
-                                  <br />
-                                  {{ customFieldThree.fieldValue }}
-                                </div>
-                              </v-div>
-                              <v-div
-                                v-if="
-                                  paymentOverview.displayLocation == 'Receiver'
-                                "
-                              >
-                                <div>
-                                  <b>{{
-                                    paymentOverview.paymentTypeHeading
-                                  }}</b>
-                                  <br />
-                                  {{ paymentOverview.paymentType }}
-                                  <br />
-                                  <b>{{
-                                    paymentOverview.paymentDetailsHeading
-                                  }}</b>
-                                  <br />
-                                  {{ paymentOverview.paymentDetails }}
-                                </div>
-                              </v-div>
-                            </div>
-                          </template>
-                          <v-card class="sender-modal-mainwrapper">
-                            <v-card-title>
-                              <span class="new-client-innerwrapper"
-                                >New Client</span
-                              >
-                              <i
-                                @click="dialogRecipient = false"
-                                class="fa fa-times sender-modalwrapper-closebtn"
-                                aria-hidden="true"
-                              ></i>
-                            </v-card-title>
-                            <v-card-text>
-                              <v-container>
-                                <v-form
-                                  ref="client_form"
-                                  @click="onFormSubmitClient"
-                                  lazy-validation
-                                >
-                                  <v-row>
-                                    <v-col cols="12">
-                                      <label class="form-label-outside"
-                                        >Name / Company Name</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        required
-                                        :rules="nameRules"
-                                        hide-details="auto"
-                                        class="form-control"
-                                        v-model="
-                                          invoiceClientView.clientCompanyName
-                                        "
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >First Name</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        class="form-control"
-                                        v-model="
-                                          invoiceClientView.clientFirstName
-                                        "
-                                        hide-details="auto"
-                                        :rules="globalRules"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Last Name</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        class="form-control"
-                                        v-model="
-                                          invoiceClientView.clientLastName
-                                        "
-                                        hide-details="auto"
-                                        :rules="globalRules"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="8">
-                                      <label class="form-label-outside"
-                                        >Email Address</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        required
-                                        :rules="emailRules"
-                                        class="form-control"
-                                        v-model="invoiceClientView.clientEmail"
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4" lg="4">
-                                      <div class="country-selectb">
-                                        <label class="form-label-outside"
-                                          >Country</label
-                                        >
-                                        <v-select
-                                          v-model="
-                                            invoiceClientView.clientCountry
-                                          "
-                                          :items="currencies"
-                                          outlined
-                                          required
-                                          :rules="countryRules"
-                                          item-text="name"
-                                          item-value="id"
-                                          hide-details="auto"
-                                        ></v-select>
-                                      </div>
-                                    </v-col>
-                                    <v-col cols="12">
-                                      <div class="border-wrapper-modal"></div>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Address Line 1</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        :rules="globalRulesAddress"
-                                        class="form-control"
-                                        v-model="
-                                          invoiceClientView.clientAddress1
-                                        "
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Address Line 2</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        :rules="globalRulesAddress"
-                                        class="form-control"
-                                        v-model="
-                                          invoiceClientView.clientAddress2
-                                        "
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Phone</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        class="form-control"
-                                        @keypress="onlyNumbers"
-                                        maxlength="16"
-                                        v-model="invoiceClientView.clientPhone"
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="6">
-                                      <label class="form-label-outside"
-                                        >Extra Data</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        class="form-control"
-                                        v-model="
-                                          invoiceClientView.clientExtraData
-                                        "
-                                        :rules="globalRulesExtraData"
-                                        hide-details="auto"
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                      <v-card-actions
-                                        class="new-client-innerwrapper"
-                                      >
-                                        <v-btn @click="setClient">
-                                          Submit
-                                        </v-btn>
-                                      </v-card-actions>
-                                    </v-col>
-                                  </v-row>
-                                </v-form>
-                              </v-container>
-                            </v-card-text>
-                          </v-card>
-                        </v-dialog>
-                      </v-col>
-                    </v-row>
-                    <v-row class="invoice-details-wrapper">
-                      <v-col cols="6">
-                        <v-row>
-                          <v-col cols="4" class="invoice-mainwrapper">
-                            <h4>Invoice No:</h4></v-col
-                          >
-                          <v-col cols="8" class="invoice-contentwrapper">
-                            <div class="invoice-type-innerwrapper">
-                              <input
-                                type="value"
-                                class="form-control"
-                                v-model="invoiceAllDetails.invoiceNumber"
-                                placeholder="Invoice No"
-                                maxlength="20"
-                                hide-details="auto"
-                              />
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="4" class="invoice-mainwrapper">
-                            <h4>Invoice Date:</h4></v-col
-                          >
-                          <v-col cols="8" class="invoice-contentwrapper">
-                            <div class="invoice-type-innerwrapper">
-                              <vue-ctk-date-time-picker
-                                v-model="invoiceAllDetails.invoiceDate"
-                                classname="form-control"
-                                :noLabel="true"
-                                color="dodgerblue"
-                                title="Click to change date"
-                                :only-date="true"
-                                :no-shortcuts="true"
-                                format="DD-MM-YYYY"
-                                formatted="ll"
-                                :range="false"
-                                placeholder=""
-                              ></vue-ctk-date-time-picker>
-                            </div>
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6">
-                        <v-row>
-                          <v-col
-                            cols="3"
-                            style="padding: 0px"
-                            class="due-content-heading"
-                          >
-                            <h4>Due:</h4></v-col
-                          >
-                          <v-col cols="9" style="padding: 0px">
-                            <div
-                              class="
-                                invoice-type-innerwrapper
-                                due-date-calanderwrapper
-                              "
-                            >
-                              <vue-ctk-date-time-picker
-                                v-model="invoiceAllDetails.dueDate"
-                                :noLabel="true"
-                                classname="form-control"
-                                color="dodgerblue"
-                                :only-date="true"
-                                title="Click to change date"
-                                :no-shortcuts="true"
-                                format="DD-MM-YYYY"
-                                formatted="ll"
-                                placeholder=""
-                                :range="false"
-                              ></vue-ctk-date-time-picker>
-                            </div>
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-row> </v-row>
-                      <v-row>
-                        <v-col v-if="!isHiddenDescription" cols="12">
-                          <v-col cols="12">
-                            <div class="input-terms-mainwrapper">
-                              <input
-                                type="value"
-                                class="form-control"
-                                v-model="invoiceAllDetails.invoiceDescription"
-                                placeholder="Description"
-                                hide-details="auto"
-                              />
-                            </div>
-                          </v-col>
-                        </v-col>
-                        <div
-                          v-if="customFieldOne.displayLocation == 'Description'"
-                        >
-                          <div>
-                            <b>{{ customFieldOne.fieldName }}</b>
-                            <br />
-                            {{ customFieldOne.fieldValue }}
-                          </div>
-                        </div>
-                        <div
-                          v-if="customFieldTwo.displayLocation == 'Description'"
-                        >
-                          <div>
-                            <b>{{ customFieldTwo.fieldName }}</b>
-                            <br />
-                            {{ customFieldTwo.fieldValue }}
-                          </div>
-                        </div>
-                        <div
-                          v-if="
-                            customFieldThree.displayLocation == 'Description'
-                          "
-                        >
-                          <div>
-                            <b>{{ customFieldThree.fieldName }}</b>
-                            <br />
-                            {{ customFieldThree.fieldValue }}
-                          </div>
-                        </div>
-                        <div
-                          v-if="
-                            paymentOverview.displayLocation == 'Description'
-                          "
-                        >
-                          <div>
-                            <b>{{ paymentOverview.paymentTypeHeading }}</b>
-                            <br />
-                            {{ paymentOverview.paymentType }}
-                            <br />
-                            <b>{{ paymentOverview.paymentDetailsHeading }}</b>
-                            <br />
-                            {{ paymentOverview.paymentDetails }}
-                          </div>
-                        </div>
-                      </v-row>
-                    </v-row>
-                    <v-row class="invoice-line-iteams-wrapper">
-                      <div class="invoice-box">
-                        <v-form
-                          ref="tax_slip"
-                          @click="onSubmitInvoiceBuild"
-                          lazy-validation
-                        >
-                          <table
-                            class="responsive-table"
-                            cellpadding="0"
-                            cellspacing="0"
-                          >
-                            <thead>
-                              <tr class="heading">
-                                <td colspan="4">Item</td>
-                                <td>HRS/QTY</td>
-                                <td>Rate</td>
-                                <td>Tax</td>
-                                <td>Subtotal</td>
-                              </tr>
-                            </thead>
-
-                            <tbody>
-                              <tr
-                                class="item"
-                                v-for="(item, index) in items"
-                                :key="index"
-                              >
-                                <td rowspan="4">
-                                  {{ items[index].itemName }}
-                                </td>
-                                <td>
-                                  {{ items[index].quantity }}
-                                </td>
-                                <td>
-                                  {{ items[index].rate }}
-                                </td>
-                                <td>
-                                  {{ items[index].name }}
-                                  {{ items[index].value }}
-                                </td>
-                                <td>
-                                  {{ invoiceAllDetails.currencySymbol }}
-                                  {{
-                                    items[index].rate * items[index].quantity
-                                  }}.00
-                                </td>
-                                <br />
-                                <td class="description-tablebody">
-                                  {{ items[index].description }}
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </v-form>
-                        <v-row>
-                          <v-col cols="12" lg="6" md="6"></v-col>
-                          <v-col cols="12" lg="6" md="6">
-                            <div class="main-heading-invoice">
-                              <v-row>
-                                <v-col
-                                  cols="12"
-                                  class="invoice-summary-wrapper"
-                                >
-                                  <h4>Invoice Summary</h4>
-                                </v-col>
-                                <v-col
-                                  cols="12"
-                                  lg="6"
-                                  md="6"
-                                  class="subtotal-heading"
-                                  >Subtotal</v-col
-                                >
-                                <v-col
-                                  cols="12"
-                                  lg="6"
-                                  md="6"
-                                  class="subtotal-value"
-                                >
-                                  -
-                                </v-col>
-                                <v-col
-                                  cols="12"
-                                  lg="6"
-                                  md="6"
-                                  class="subtotal-heading"
-                                  >Tax</v-col
-                                >
-                                <v-col
-                                  cols="12"
-                                  lg="6"
-                                  md="6"
-                                  class="subtotal-value"
-                                >
-                                  -
-                                </v-col>
-                                <v-col
-                                  cols="12"
-                                  lg="6"
-                                  md="6"
-                                  class="subtotal-heading"
-                                  >Total
-                                  <v-dialog
-                                    v-model="dollarpickup"
-                                    persistent
-                                    max-width="250px"
-                                  >
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <div v-bind="attrs" v-on="on">
-                                        <label class="form-label-outside"
-                                          >(Currency)</label
-                                        >
-                                        <div>
-                                          <div>
-                                            {{
-                                              invoiceAllDetails.currencySymbol
-                                            }}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </template>
-                                    <v-card
-                                      class="
-                                        invoice-modalwrapper
-                                        delete-invoicemodal
-                                      "
-                                    >
-                                      <v-card-title>
-                                        <span class="new-client-innerwrapper"
-                                          >Select Currency</span
-                                        >
-                                        <i
-                                          text
-                                          @click="dollarpickup = false"
-                                          class="
-                                            fa fa-times
-                                            sender-modalwrapper-closebtn
-                                          "
-                                          aria-hidden="true"
-                                        ></i>
-                                      </v-card-title>
-                                      <v-card-text>
-                                        <v-container>
-                                          <v-row>
-                                            <v-col cols="12">
-                                              <div class="country-selectb">
-                                                <v-select
-                                                  v-model="
-                                                    invoiceAllDetails.currencySymbol
-                                                  "
-                                                  :items="currencies"
-                                                  outlined
-                                                  required
-                                                  :item-text="
-                                                    (item) =>
-                                                      item.iso_code +
-                                                      ' - ' +
-                                                      item.name
-                                                  "
-                                                  item-value="item.iso_code"
-                                                  hide-details="auto"
-                                                ></v-select>
-                                              </div>
-                                            </v-col>
-                                          </v-row>
-
-                                          <div
-                                            class="
-                                              new-client-innerwrapper
-                                              set-invoice-modal
-                                            "
-                                          >
-                                            <v-btn
-                                              @click="dollarpickup = false"
-                                            >
-                                              Submit
-                                            </v-btn>
-                                          </div>
-                                        </v-container>
-                                      </v-card-text>
-                                    </v-card>
-                                  </v-dialog>
-                                </v-col>
-                                <v-col
-                                  cols="12"
-                                  lg="6"
-                                  md="6"
-                                  class="subtotal-value"
-                                >
-                                </v-col>
-                                <v-col
-                                  cols="12"
-                                  lg="6"
-                                  md="6"
-                                  class="subtotal-heading"
-                                ></v-col>
-                                <v-col
-                                  cols="12"
-                                  lg="6"
-                                  md="6"
-                                  class="subtotal-value"
-                                ></v-col>
-                              </v-row>
-                            </div>
-                          </v-col>
-                        </v-row>
-                      </div>
-                    </v-row>
-                    <v-row>
-                      <div v-if="customFieldOne.displayLocation == 'Terms'">
-                        <div>
-                          <b>{{ customFieldOne.fieldName }}</b>
-                          <br />
-                          {{ customFieldOne.fieldValue }}
-                        </div>
-                      </div>
-                      <div v-if="customFieldTwo.displayLocation == 'Terms'">
-                        <div>
-                          <b>{{ customFieldTwo.fieldName }}</b>
-                          <br />
-                          {{ customFieldTwo.fieldValue }}
-                        </div>
-                      </div>
-                      <div v-if="customFieldThree.displayLocation == 'Terms'">
-                        <div>
-                          <b>{{ customFieldThree.fieldName }}</b>
-                          <br />
-                          {{ customFieldThree.fieldValue }}
-                        </div>
-                      </div>
-                      <div v-if="paymentOverview.displayLocation == 'Terms'">
-                        <div>
-                          <b>{{ paymentOverview.paymentTypeHeading }}</b>
-                          <br />
-                          {{ paymentOverview.paymentType }}
-                          <br />
-                          <b>{{ paymentOverview.paymentDetailsHeading }}</b>
-                          <br />
-                          {{ paymentOverview.paymentDetails }}
-                        </div>
-                      </div>
-                      <v-col cols="12">
-                        <div class="input-terms-mainwrapper">
-                          {{ invoiceAllDetails.invoiceTerms }}
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-card>
-                </label>
-              </section>
-            </vue-html2pdf>
-          </div>
-        </v-row>
-        <v-row>
           <v-col cols="8">
-            <div class="text-center">
-              <v-dialog v-model="dialog" hide-overlay persistent width="300">
-                <v-card color="primary" dark>
-                  <v-card-text>
-                    Uploading
-                    <v-progress-linear
-                      indeterminate
-                      color="white"
-                      class="mb-0"
-                    ></v-progress-linear>
-                  </v-card-text>
-                </v-card>
-              </v-dialog>
-            </div>
             <v-card class="bank-template-mainwrapper">
               <v-row>
                 <v-col cols="6">
@@ -1193,6 +66,7 @@
                               @click="dialog = true"
                             />
                           </div>
+
                           <br />
                           <pre></pre>
                         </div>
@@ -1200,6 +74,12 @@
                     </div>
                     <div v-else>
                       <div v-if="imageData != null">
+                        <div v-if="isSpinner" class="pt-12 pb-12 text-center">
+                          <v-progress-circular
+                            indeterminate
+                            color="primary"
+                          ></v-progress-circular>
+                        </div>
                         <img
                           class="preview"
                           object-fit:
@@ -1293,19 +173,8 @@
                             <b>{{ invoiceSenderView.senderName }}</b>
                           </div>
                           <div>
-                            {{ invoiceSenderView.senderCountry }}
-                          </div>
-                          <div>
                             {{ invoiceSenderView.senderFirstName }}
-                          </div>
-                          <div>
                             {{ invoiceSenderView.senderLastName }}
-                          </div>
-                          <div>
-                            {{ invoiceSenderView.senderTaxNumber }}
-                          </div>
-                          <div>
-                            {{ invoiceSenderView.senderEmail }}
                           </div>
                           <div>
                             {{ invoiceSenderView.senderAddress1 }}
@@ -1314,10 +183,23 @@
                             {{ invoiceSenderView.senderAddress2 }}
                           </div>
                           <div>
+                            {{ invoiceSenderView.senderCountry }}
+                          </div>
+                          <div>
+                            {{ invoiceSenderView.senderEmail }}
+                          </div>
+
+                          <div>
                             {{ invoiceSenderView.senderPhone }}
                           </div>
                           <div>
                             {{ invoiceSenderView.senderWebsite }}
+                          </div>
+                          <div>
+                            {{ invoiceSenderView.taxRegistrationNumber }}
+                          </div>
+                          <div>
+                            {{ invoiceSenderView.senderTaxNumber }}
                           </div>
                         </div>
                         <div v-else>
@@ -1326,19 +208,18 @@
                             <h5>Sender Name</h5>
                             <p>Sender Contact Details</p>
                           </div>
+                          <!-- <div v-if="!isHiddenCompanyInfo">
+                            <div class="input-terms-mainwrapper">
+                              <input
+                                type="value"
+                                class="form-control"
+                                v-model="invoiceAllDetails.companyInfo"
+                                hide-details="auto"
+                              />
+                            </div>
+                          </div> -->
                         </div>
-                        <br />
-                        <br />
-                        <div v-if="!isHiddenCompanyInfo">
-                          <div class="input-terms-mainwrapper">
-                            <input
-                              type="value"
-                              class="form-control"
-                              v-model="invoiceAllDetails.companyInfo"
-                              hide-details="auto"
-                            />
-                          </div>
-                        </div>
+
                         <div v-if="customFieldOne.displayLocation == 'Sender'">
                           <div>
                             <b>{{ customFieldOne.fieldName }}</b>
@@ -1378,7 +259,7 @@
                     <v-card class="sender-modal-mainwrapper">
                       <v-card-title>
                         <i
-                          @click="dialogSender = false"
+                          @click="setSenderClose"
                           class="fa fa-times sender-modalwrapper-closebtn"
                           aria-hidden="true"
                         ></i>
@@ -1413,6 +294,8 @@
                                     v-model="invoiceSenderView.senderCountry"
                                     :items="currencies"
                                     outlined
+                                    required
+                                    :rules="countryRules"
                                     item-text="name"
                                     item-value="id"
                                     hide-details="auto"
@@ -1447,10 +330,16 @@
                               </v-col>
                               <v-col cols="12" lg="6">
                                 <div class="registraction-inpu-modal">
-                                  <i class="fa fa-pencil"></i
-                                  ><input
-                                    type="text"
+                                  <i class="fa fa-pencil"></i>
+                                  <input
+                                    type="value"
+                                    class="form-control"
+                                    v-model="
+                                      invoiceSenderView.taxRegistrationNumber
+                                    "
                                     placeholder="Tax Registration Number"
+                                    maxlength="50"
+                                    hide-details="auto"
                                   />
                                 </div>
                                 <v-text-field
@@ -1468,6 +357,7 @@
                                   required
                                   class="form-control"
                                   :rules="emailRules"
+                                  maxlength="200"
                                   v-model="invoiceSenderView.senderEmail"
                                   hide-details="auto"
                                 ></v-text-field>
@@ -1493,21 +383,29 @@
                                 >
                                 <v-text-field
                                   outlined
-                                  :rules="globalRulesAddress"
+                                  maxlength="200"
                                   class="form-control"
                                   v-model="invoiceSenderView.senderAddress2"
                                   hide-details="auto"
                                 ></v-text-field>
                               </v-col>
+
                               <v-col cols="12" lg="6">
                                 <label class="form-label-outside">Phone</label>
                                 <v-text-field
                                   outlined
+                                  onselectstart="return false"
+                                  onpaste="return false;"
+                                  onCopy="return false"
+                                  onCut="return false"
+                                  onDrag="return false"
+                                  onDrop="return false"
+                                  autocomplete="off"
                                   class="form-control"
+                                  @keypress="onlyNumbers"
+                                  :rules="globalRulesPhone"
                                   v-model="invoiceSenderView.senderPhone"
                                   hide-details="auto"
-                                  @keypress="onlyNumbers"
-                                  maxlength="16"
                                 ></v-text-field>
                               </v-col>
                               <v-col cols="12" lg="6">
@@ -1535,6 +433,16 @@
                       </v-card-text>
                     </v-card>
                   </v-dialog>
+                  <div v-if="!isHiddenCompanyInfo">
+                    <div class="input-terms-mainwrapper">
+                      <input
+                        type="value"
+                        class="form-control"
+                        v-model="invoiceAllDetails.companyInfo"
+                        hide-details="auto"
+                      />
+                    </div>
+                  </div>
                 </v-col>
                 <v-col cols="6">
                   <v-dialog
@@ -1591,16 +499,7 @@
                         </div>
                         <br />
                         <br />
-                        <v-div v-if="!isHiddenClientInfo">
-                          <div class="input-terms-mainwrapper">
-                            <input
-                              type="value"
-                              class="form-control"
-                              v-model="invoiceAllDetails.clientInfo"
-                              hide-details="auto"
-                            />
-                          </div>
-                        </v-div>
+
                         <v-div
                           v-if="customFieldOne.displayLocation == 'Receiver'"
                         >
@@ -1647,7 +546,7 @@
                       <v-card-title>
                         <span class="new-client-innerwrapper">New Client</span>
                         <i
-                          @click="dialogRecipient = false"
+                          @click="setRecipientClose"
                           class="fa fa-times sender-modalwrapper-closebtn"
                           aria-hidden="true"
                         ></i>
@@ -1694,7 +593,7 @@
                                   class="form-control"
                                   v-model="invoiceClientView.clientLastName"
                                   hide-details="auto"
-                                  :rules="globalRules"
+                                  maxlength="200"
                                 ></v-text-field>
                               </v-col>
                               <v-col cols="12" lg="8">
@@ -1705,6 +604,7 @@
                                   outlined
                                   required
                                   :rules="emailRules"
+                                  maxlength="200"
                                   class="form-control"
                                   v-model="invoiceClientView.clientEmail"
                                   hide-details="auto"
@@ -1748,19 +648,27 @@
                                 >
                                 <v-text-field
                                   outlined
-                                  :rules="globalRulesAddress"
+                                  maxlength="200"
                                   class="form-control"
                                   v-model="invoiceClientView.clientAddress2"
                                   hide-details="auto"
                                 ></v-text-field>
                               </v-col>
+
                               <v-col cols="12" lg="6">
                                 <label class="form-label-outside">Phone</label>
                                 <v-text-field
                                   outlined
+                                  onselectstart="return false"
+                                  onpaste="return false;"
+                                  onCopy="return false"
+                                  onCut="return false"
+                                  onDrag="return false"
+                                  onDrop="return false"
+                                  autocomplete="off"
                                   class="form-control"
                                   @keypress="onlyNumbers"
-                                  maxlength="16"
+                                  :rules="globalRulesPhone"
                                   v-model="invoiceClientView.clientPhone"
                                   hide-details="auto"
                                 ></v-text-field>
@@ -1773,7 +681,7 @@
                                   outlined
                                   class="form-control"
                                   v-model="invoiceClientView.clientExtraData"
-                                  :rules="globalRulesExtraData"
+                                  maxlength="200"
                                   hide-details="auto"
                                 ></v-text-field>
                               </v-col>
@@ -1788,6 +696,16 @@
                       </v-card-text>
                     </v-card>
                   </v-dialog>
+                  <v-div v-if="!isHiddenClientInfo">
+                    <div class="input-terms-mainwrapper">
+                      <input
+                        type="value"
+                        class="form-control"
+                        v-model="invoiceAllDetails.clientInfo"
+                        hide-details="auto"
+                      />
+                    </div>
+                  </v-div>
                 </v-col>
               </v-row>
               <v-row class="invoice-details-wrapper">
@@ -1928,10 +846,11 @@
                     >
                       <thead>
                         <tr class="heading">
-                          <td colspan="4">Item</td>
+                          <td>Item</td>
                           <td>HRS/QTY</td>
                           <td>Rate</td>
                           <td>Tax</td>
+                          <td>Tax Type</td>
                           <td>Subtotal</td>
                           <td></td>
                         </tr>
@@ -1977,119 +896,47 @@
                               v-model="items[index].rate"
                             ></v-text-field>
                           </td>
-                          <!-- <td class="new-tax-rateselect">
-                            <v-select
-                              :items="newItemsTaxRate"
-                              v-model="input"
-                              outlined
-                              @input="onChange"
-                              class="form-control"
-                              append-icon="true"
-                              type="value"
-                              item-text="name"
-                              item-value="id"
+                          <td v-if="items[index].taxType == 'Non Taxable'">
+                            <v-text-field
                               hide-details="auto"
-                            ></v-select>
-                            {{ items[index].newTaxName }}
-                            {{ items[index].taxRate }}
-                          </td> -->
-                          <td class="new-tax-rateselect">
-                            <v-autocomplete
-                              :items="newItemsTaxRate"
                               outlined
-                              @input="onChange"
+                              @keypress="onlyNumbers"
+                              maxlength="10"
                               class="form-control"
-                              append-icon="true"
                               type="value"
-                              item-value="value"
-                              :item-text="
-                                (item) => item.name + item.value + '(%) '
-                              "
-                              hide-details="auto"
-                              :disabled="isUpdating"
-                              filled
-                              chips
-                              color="blue-grey lighten-2"
-                              label="Select"
-                              multiple
-                            >
-                            </v-autocomplete>
+                              :disabled="disabled == 1"
+                              v-model="items[index].Taxrate"
+                            ></v-text-field>
                           </td>
-                          <v-dialog
-                            v-model="newTaxRate"
-                            persistent
-                            max-width="350px"
-                          >
-                            <v-card
-                              class="
-                                invoice-modalwrapper
-                                delete-invoicemodal
-                                custom-modalinnerwrapper
-                              "
-                            >
-                              <v-card-title>
-                                <i
-                                  text
-                                  @click="newTaxRate = false"
-                                  class="
-                                    fa fa-times
-                                    sender-modalwrapper-closebtn
-                                  "
-                                  aria-hidden="true"
-                                ></i>
-                              </v-card-title>
-                              <v-card-text>
-                                <v-container>
-                                  <v-row>
-                                    <v-col cols="12" lg="12">
-                                      <label class="form-label-outside"
-                                        >Name</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        required
-                                        class="form-control"
-                                        v-model="newItemsTaxRate.name"
-                                        hide-details="auto"
-                                        :rules="customFieldRules"
-                                      ></v-text-field>
-                                    </v-col>
-                                  </v-row>
-                                  <v-row>
-                                    <v-col cols="12" lg="12">
-                                      <label class="form-label-outside"
-                                        >Rate (%)</label
-                                      >
-                                      <v-text-field
-                                        outlined
-                                        required
-                                        class="form-control"
-                                        v-model="newItemsTaxRate.value"
-                                        hide-details="auto"
-                                        @keypress="onlyNumbers"
-                                        maxlength="10"
-                                        :rules="customFieldRules"
-                                      >
-                                      </v-text-field>
-                                    </v-col>
-                                  </v-row>
-                                  <div
-                                    class="
-                                      new-client-innerwrapper
-                                      set-invoice-modal
-                                    "
-                                  >
-                                    <v-btn @click="newTax">Submit</v-btn>
-                                  </div>
-                                </v-container>
-                              </v-card-text>
-                            </v-card>
-                          </v-dialog>
+                          <td v-else>
+                            <v-text-field
+                              hide-details="auto"
+                              outlined
+                              @keypress="onlyNumbers"
+                              maxlength="10"
+                              class="form-control"
+                              type="value"
+                              v-model="items[index].Taxrate"
+                            ></v-text-field>
+                          </td>
+                          <td>
+                            <v-radio-group v-model="items[index].taxType" row>
+                              <v-radio
+                                label="Taxable"
+                                value="Taxable"
+                              ></v-radio>
+                              <v-radio
+                                label="Non Taxable"
+                                value="Non Taxable"
+                              ></v-radio>
+                            </v-radio-group>
+                          </td>
 
                           <td>
                             {{ invoiceAllDetails.currencySymbol }}
                             {{ items[index].rate * items[index].quantity }}.00
                           </td>
+
                           <br />
                           <td class="description-tablebody">
                             <v-textarea
@@ -2146,7 +993,7 @@
                             >Subtotal</v-col
                           >
                           <v-col cols="12" lg="6" md="6" class="subtotal-value">
-                            -
+                            {{ invoiceAllDetails.currencySymbol }}{{ subTotal }}
                           </v-col>
                           <v-col
                             cols="12"
@@ -2156,7 +1003,7 @@
                             >Tax</v-col
                           >
                           <v-col cols="12" lg="6" md="6" class="subtotal-value">
-                            -
+                            {{ invoiceAllDetails.currencySymbol }}{{ taxTotal }}
                           </v-col>
                           <v-col
                             cols="12"
@@ -2164,94 +1011,93 @@
                             md="6"
                             class="subtotal-heading"
                             >Total
-                            <v-dialog
-                              v-model="dollarpickup"
-                              persistent
-                              max-width="250px"
+                            <v-col
+                              cols="12"
+                              lg="6"
+                              md="6"
+                              class="invoice-contentwrapper"
                             >
-                              <template v-slot:activator="{ on, attrs }">
-                                <div v-bind="attrs" v-on="on">
-                                  <label class="form-label-outside"
-                                    >(Currency)</label
-                                  >
-                                  <div>
-                                    <div>
-                                      {{ invoiceAllDetails.currencySymbol }}
-                                    </div>
-                                  </div>
-                                </div>
-                              </template>
-                              <v-card
-                                class="invoice-modalwrapper delete-invoicemodal"
-                              >
-                                <v-card-title>
-                                  <span class="new-client-innerwrapper"
-                                    >Select Currency</span
-                                  >
-                                  <i
-                                    text
-                                    @click="dollarpickup = false"
-                                    class="
-                                      fa fa-times
-                                      sender-modalwrapper-closebtn
-                                    "
-                                    aria-hidden="true"
-                                  ></i>
-                                </v-card-title>
-                                <v-card-text>
-                                  <v-container>
-                                    <v-row>
-                                      <v-col cols="12">
-                                        <div class="country-selectb">
-                                          <v-select
-                                            v-model="
-                                              invoiceAllDetails.currencySymbol
-                                            "
-                                            :items="currencies"
-                                            outlined
-                                            required
-                                            :item-text="
-                                              (item) =>
-                                                item.iso_code +
-                                                ' - ' +
-                                                item.name
-                                            "
-                                            item-value="item.iso_code"
-                                            hide-details="auto"
-                                          ></v-select>
+                              <div class="invoice-type-innerwrapper">
+                                <v-dialog
+                                  v-model="dollarpickup"
+                                  persistent
+                                  max-width="250px"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <div v-bind="attrs" v-on="on">
+                                      <div>
+                                        <div>
+                                          {{ invoiceAllDetails.currencySymbol }}
                                         </div>
-                                      </v-col>
-                                    </v-row>
-
-                                    <div
-                                      class="
-                                        new-client-innerwrapper
-                                        set-invoice-modal
-                                      "
-                                    >
-                                      <v-btn @click="dollarpickup = false">
-                                        Submit
-                                      </v-btn>
+                                      </div>
                                     </div>
-                                  </v-container>
-                                </v-card-text>
-                              </v-card>
-                            </v-dialog>
+                                  </template>
+                                  <v-card
+                                    class="
+                                      invoice-modalwrapper
+                                      delete-invoicemodal
+                                    "
+                                  >
+                                    <v-card-title>
+                                      <span class="new-client-innerwrapper"
+                                        >Select Currency</span
+                                      >
+                                      <i
+                                        text
+                                        @click="dollarpickup = false"
+                                        class="
+                                          fa fa-times
+                                          sender-modalwrapper-closebtn
+                                        "
+                                        aria-hidden="true"
+                                      ></i>
+                                    </v-card-title>
+                                    <v-card-text>
+                                      <v-container>
+                                        <v-row>
+                                          <v-col cols="12">
+                                            <div class="country-selectb">
+                                              <v-select
+                                                v-model="
+                                                  invoiceAllDetails.currencySymbol
+                                                "
+                                                :items="currencies"
+                                                outlined
+                                                required
+                                                :item-text="
+                                                  (item) =>
+                                                    item.iso_code +
+                                                    ' - ' +
+                                                    item.name
+                                                "
+                                                item-value="item.iso_code"
+                                                hide-details="auto"
+                                              ></v-select>
+                                            </div>
+                                          </v-col>
+                                        </v-row>
+
+                                        <div
+                                          class="
+                                            new-client-innerwrapper
+                                            set-invoice-modal
+                                          "
+                                        >
+                                          <v-btn @click="dollarpickup = false">
+                                            Submit
+                                          </v-btn>
+                                        </div>
+                                      </v-container>
+                                    </v-card-text>
+                                  </v-card>
+                                </v-dialog>
+                              </div>
+                            </v-col>
                           </v-col>
                           <v-col cols="12" lg="6" md="6" class="subtotal-value">
+                            {{ invoiceAllDetails.currencySymbol
+                            }}{{ grandTotal }}
                           </v-col>
-                          <v-col
-                            cols="12"
-                            lg="6"
-                            md="6"
-                            class="subtotal-heading"
-                          ></v-col>
-                          <v-col
-                            cols="12"
-                            lg="6"
-                            md="6"
-                            class="subtotal-value"
-                          ></v-col>
                         </v-row>
                       </div>
                     </v-col>
@@ -2370,7 +1216,7 @@
                                   class="form-control"
                                   v-model="paymentOverview.paymentType"
                                   hide-details="auto"
-                                  :rules="globalRules"
+                                  maxlength="20"
                                 ></v-text-field>
                               </v-col>
                             </v-row>
@@ -2395,7 +1241,7 @@
                                   class="form-control"
                                   v-model="paymentOverview.paymentDetails"
                                   hide-details="auto"
-                                  :rules="globalRulesAddress"
+                                  maxlength="200"
                                 ></v-textarea>
                               </v-col>
                             </v-row>
@@ -2448,7 +1294,6 @@
                         placeholder="Enter payment amount"
                         class="form-control"
                         v-model="invoiceAllDetails.invoicePayment"
-                        :rules="globalRules"
                         @keypress="paymentValidations"
                         maxlength="16"
                         type="value"
@@ -2801,55 +1646,50 @@
   defer
 ></script>
 <script>
-import HelloWorld from "@/components/HelloWorld.vue";
 import firebase from "firebase";
 import "firebase/firestore";
 import currencyJson from "../data/currencies.json";
 import VueCtkDateTimePicker from "vue-ctk-date-time-picker";
 import "vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css";
-import VueHtml2pdf from "vue-html2pdf";
 import Toaster from "../services/sweetToaster.js";
 
 export default {
   currencyJson: currencyJson,
-  name: "RegisterAdmin",
+  name: "invoiceGenerate",
   components: {
-    HelloWorld,
     VueCtkDateTimePicker,
-    VueHtml2pdf,
   },
 
-  watch: {
-    onChange(val) {
-      if (val === "1") {
-        this.openModal();
-        this.newTaxRate = true;
-      }
+  computed: {
+    subTotal: function () {
+      var total = this.items.reduce(function (accumulator, items) {
+        return accumulator + items.rate * items.quantity;
+      }, 0);
+      return total;
     },
-    dialog(val) {
-      if (!val) return;
-      setTimeout(() => (this.dialog = false), 4000);
+    taxTotal: function () {
+      var total = this.items.reduce(function (accumulator, items) {
+        return (
+          accumulator + items.rate * items.quantity * (items.Taxrate / 100)
+        );
+      }, 0);
+
+      // var total = this.subTotal * (items.Taxrate / 100);
+      return total;
     },
-    isUpdating(val) {
-      if (val) {
-        setTimeout(() => (this.isUpdating = false), 3000);
-      }
+    grandTotal: function () {
+      var total = this.subTotal + this.taxTotal;
+      return total;
     },
   },
   methods: {
+    // test: function () {
+    //   this.disabled = true;
+    //   // this.items[index].Taxrate = "";
+    // },
     remove(items) {
       const index = this.newItemsTaxRate.indexOf(items.name);
       if (index >= 0) this.newItemsTaxRate.splice(index, 1);
-    },
-    onChange(e) {
-      if (e == "1") {
-        this.openModal();
-        this.newTaxRate = true;
-      }
-    },
-    openModal() {
-      this.show = true;
-      document.body.classList.add("overflow-hidden");
     },
     click1() {
       this.$refs.input1.click();
@@ -2895,7 +1735,9 @@ export default {
         () => {
           this.uploadValue = 100;
           storageRef.snapshot.ref.getDownloadURL().then((url) => {
+            this.isSpinner = true;
             this.img1 = url;
+            this.isSpinner = false;
           });
         }
       );
@@ -2943,34 +1785,39 @@ export default {
         this.items.push({
           itemName: "",
           quantity: "",
+          Taxrate: "",
+          taxType: "Non Taxable",
           rate: "",
-          name: "",
-          value: "",
           description: "",
         });
       }
     },
-
     onFormSubmit() {
-      var db = firebase.firestore();
-      db.collection("invoiceSenderViews")
-        .add(this.invoiceSenderView)
-        .then(() => {
-          this.dialogSender = false;
-          this.invoiceSenderView.senderName = "";
-          this.invoiceSenderView.senderCountry = "";
-          this.invoiceSenderView.senderFirstName = "";
-          this.invoiceSenderView.senderLastName = "";
-          this.invoiceSenderView.senderTaxNumber = "";
-          this.invoiceSenderView.senderEmail = "";
-          this.invoiceSenderView.senderAddress1 = "";
-          this.invoiceSenderView.senderAddress2 = "";
-          this.invoiceSenderView.senderPhone = "";
-          this.invoiceSenderView.senderWebsite = "";
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      firebase.auth().onAuthStateChanged((userAuth) => {
+        if (userAuth) {
+          var db = firebase.firestore();
+          this.invoiceSenderView.user_id = userAuth.uid;
+          db.collection("invoiceSenderViews")
+            .add(this.invoiceSenderView)
+            .then(() => {
+              this.dialogSender = false;
+              this.invoiceSenderView.senderName = "";
+              this.invoiceSenderView.senderCountry = "";
+              this.invoiceSenderView.senderFirstName = "";
+              this.invoiceSenderView.senderLastName = "";
+              this.invoiceSenderView.taxRegistrationNumber = "";
+              this.invoiceSenderView.senderTaxNumber = "";
+              this.invoiceSenderView.senderEmail = "";
+              this.invoiceSenderView.senderAddress1 = "";
+              this.invoiceSenderView.senderAddress2 = "";
+              this.invoiceSenderView.senderPhone = "";
+              this.invoiceSenderView.senderWebsite = "";
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      });
     },
     onSubmitInvoiceLogo() {
       const formData = new FormData();
@@ -3008,32 +1855,36 @@ export default {
       db.collection("invoiceTaxDetails")
         .add(payload)
         .then(() => {
-          //  this.newItemsTaxRate.value;
-          console.log("ABC", this.items);
+          console.log("Items", this.items);
         })
         .catch((error) => {
           console.log(error);
         });
     },
     onFormSubmitClient() {
-      var db = firebase.firestore();
-      db.collection("invoiceClientViews")
-        .add(this.invoiceClientView)
-        .then(() => {
-          this.dialogRecipient = false;
-          this.invoiceClientView.clientCompanyName = "";
-          this.invoiceClientView.clientFirstName = "";
-          this.invoiceClientView.clientLastName = "";
-          this.invoiceClientView.clientEmail = "";
-          this.invoiceClientView.clientCountry = "";
-          this.invoiceClientView.clientAddress1 = "";
-          this.invoiceClientView.clientAddress2 = "";
-          this.invoiceClientView.clientPhone = "";
-          this.invoiceClientView.clientExtraData = "";
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      firebase.auth().onAuthStateChanged((userAuth) => {
+        if (userAuth) {
+          var db = firebase.firestore();
+          this.invoiceClientView.user_id = userAuth.uid;
+          db.collection("invoiceClientViews")
+            .add(this.invoiceClientView)
+            .then(() => {
+              this.dialogRecipient = false;
+              this.invoiceClientView.clientCompanyName = "";
+              this.invoiceClientView.clientFirstName = "";
+              this.invoiceClientView.clientLastName = "";
+              this.invoiceClientView.clientEmail = "";
+              this.invoiceClientView.clientCountry = "";
+              this.invoiceClientView.clientAddress1 = "";
+              this.invoiceClientView.clientAddress2 = "";
+              this.invoiceClientView.clientPhone = "";
+              this.invoiceClientView.clientExtraData = "";
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      });
     },
     onSubmitPayment() {
       var db = firebase.firestore();
@@ -3135,18 +1986,28 @@ export default {
         Toaster.error("Invoice Items: Add at least one invoice item", "error");
       }
     },
-    generateReport() {
-      const check = this.$refs.tax_slip.validate();
-      if (check) {
-        this.$refs.html2Pdf.generatePdf();
-      } else {
-        Toaster.error("Invoice Items: Add at least one invoice item", "error");
-      }
-    },
     setSender() {
       const check = this.$refs.sender_form.validate();
       if (check) {
         this.dialogSender = false;
+      }
+    },
+    setSenderClose() {
+      this.dialogSender = false;
+      const check = this.$refs.sender_form.validate();
+      if (check) {
+        this.dialogSender = false;
+      } else {
+        this.$refs.sender_form.reset();
+      }
+    },
+    setRecipientClose() {
+      this.dialogRecipient = false;
+      const check = this.$refs.client_form.validate();
+      if (check) {
+        this.dialogRecipient = false;
+      } else {
+        this.$refs.client_form.reset();
       }
     },
     setClient() {
@@ -3157,6 +2018,9 @@ export default {
     },
     setPaymentDetails() {
       this.addPaymentDetails = false;
+      this.paymentOverview.paymentDetailsHeading = "Payment Details";
+
+      this.paymentOverview.paymentTypeHeading = "Payment Type";
     },
     setCustomField1() {
       const check = this.$refs.submit_custom_field.validate();
@@ -3164,14 +2028,6 @@ export default {
         this.customField1 = false;
       }
     },
-    newTax() {
-      this.newItemsTaxRate.push({
-        value: this.newItemsTaxRate.value,
-        name: this.newItemsTaxRate.name,
-      });
-      this.newTaxRate = false;
-    },
-
     setCustomField2() {
       const check = this.$refs.submit_custom_field2.validate();
       if (check) {
@@ -3200,6 +2056,8 @@ export default {
         this.invoiceSenderView.senderCountry = data.senderCountry;
         this.invoiceSenderView.senderFirstName = data.senderFirstName;
         this.invoiceSenderView.senderLastName = data.senderLastName;
+        this.invoiceSenderView.taxRegistrationNumber =
+          data.taxRegistrationNumber;
         this.invoiceSenderView.senderTaxNumber = data.senderTaxNumber;
         this.invoiceSenderView.senderEmail = data.senderEmail;
         this.invoiceSenderView.senderAddress1 = data.senderAddress1;
@@ -3287,7 +2145,6 @@ export default {
       .catch((error) => {
         console.log(error);
       });
-
     let dbRefCustomFieldTwo = db
       .collection("customFieldTwo")
       .doc(this.customFieldTwo);
@@ -3319,8 +2176,10 @@ export default {
       });
   },
   data: () => ({
+    disabled: 0,
+    isSpinner: true,
     autoUpdate: true,
-    isUpdating: false,
+    // isUpdating: false,
     input: [],
     dialog: false,
     show: false,
@@ -3358,13 +2217,19 @@ export default {
       (v) => v.length <= 20 || "Name must be less than 20 characters",
     ],
     globalRules: [
-      (v) => v.length <= 20 || "Name must be less than 20 characters",
+      (v) => !!v || "Please complete this mandatory field.",
+      (v) => (v && v.length <= 20) || "Name must be less than 20 characters",
     ],
     globalRulesAddress: [
-      (v) => v.length <= 200 || "Address must be less than 200 characters",
+      (v) => !!v || "Please complete this mandatory field.",
+      (v) =>
+        (v && v.length <= 200) || "Address must be less than 200 characters",
     ],
-    globalRulesExtraData: [
-      (v) => v.length <= 200 || "Data must be less than 200 characters",
+
+    globalRulesPhone: [
+      (v) => !!v || "Please complete this mandatory field.",
+      (v) =>
+        (v && v.length <= 16) || "Phone Number must be less than 16 characters",
     ],
     websiteRules: [
       (v) =>
@@ -3389,7 +2254,10 @@ export default {
       (v) => !!v || "Please complete this mandatory field.",
       (v) => (v && v.length <= 20) || "Name must be less than 20 characters",
     ],
-    invoiceSenderView: {},
+    invoiceSenderView: {
+      taxRegistrationNumber: "Tax Registration Number",
+    },
+
     paymentOverview: {
       paymentTypeHeading: "",
       paymentType: "",
@@ -3422,20 +2290,12 @@ export default {
       invoiceDescription: "",
       invoiceNumber: "001",
       invoiceTerms: "",
-      invoiceDate: "30-12-2021",
-      dueDate: "30-12-2021",
+      invoiceDate: new Date(),
+      dueDate: new Date(),
       currencySymbol: "United States Dollar",
     },
     invoiceLogo: {
       logoImage: "",
-    },
-    invoiceBuild: {
-      itemName: "",
-      quantity: "",
-      rate: "",
-      value: "",
-      name: "",
-      description: "",
     },
     invoiceType: [
       {
@@ -3508,9 +2368,9 @@ export default {
       {
         itemName: "",
         quantity: "",
+        Taxrate: "",
+        taxType: "Non Taxable",
         rate: "",
-        value: "",
-        name: "",
         description: "",
       },
     ],
@@ -3564,6 +2424,8 @@ export default {
   }),
   mounted() {
     this.currencies = currencyJson;
+    //console.log("currencies", this.currencies);
+    // console.log("iso_code", this.currencies[0].iso_code);
   },
 };
 </script>
@@ -3752,7 +2614,7 @@ button.save-btn:hover {
 button.downlaod-btn {
   background: #552cf6 !important;
   color: #fff !important;
-  padding: 20px 30px !important;
+  /* padding: 20px 30px !important; */
 }
 button.downlaod-btn:hover {
   background: #285cff !important;

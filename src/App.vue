@@ -1,41 +1,14 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Welcome" />
-    <header class="header-area fixed_header">
-      <v-card-actions class="login-btn-main-wrapper">
-        <router-link to="/create-invoice"> Create Invoice</router-link>
-        <!-- <router-link class="nav-link pr-3" to="/">Add User</router-link>
-        <router-link class="nav-link" to="/list">View Users</router-link> -->
-      </v-card-actions>
-    </header>
-
-    <div id="nav">
-      <div v-if="!user" class="col-sm">
-        <router-link to="/">Sign In</router-link> |
-        <router-link to="/register-admin">Sign Up</router-link>
-        <!-- <div v-if="user_type == 'Admin'">
-          <router-link to="/admin">Dashboard</router-link>
-        </div>
-        <div v-if="user_type == 'Customer'">
-          <router-link to="/customer">Dashboard</router-link>
-        </div> -->
-      </div>
-    </div>
     <router-view />
   </div>
 </template>
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
 import firebase from "firebase";
-// import * as firebase from "firebase/app";
-// import "firebase/auth";
 
 export default {
-  // name: "Home","App",
-  components: {
-    HelloWorld,
-  },
+  components: {},
   data() {
     return {
       email: "",
